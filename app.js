@@ -25,19 +25,24 @@ const serviceAccountAuth = new JWT({
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
-const doc = new GoogleSpreadsheet('1Jntk1V_DLHunAOGjRq5NE1dBH_DWwV8Pf2ZcZBLMvKQ', serviceAccountAuth);
+const doc = new GoogleSpreadsheet('1o6XhHE4AJu9H3XeTz0UCTTjfC1V871NrtwC5EIcQw7I', serviceAccountAuth);
 
 await doc.loadInfo(); // loads document properties and worksheets
 
 console.log('Доступ к документу : ', doc.title, ' получен');
 
 
-const startDate = '2025-03-31';
-const endDate = '2025-04-13';
+const startDate = '2025-04-28';
+const endDate = '2025-05-11';
 
 const sheets_titles = ['март 25', 'апрель25', 'май25'];
 
 const persons = [
+    {
+    name: 'Айметдинова Ольга Викторовна',
+    is_ip: false,
+    sheet: 1
+  },
   {
     name: 'Баранцева Анна Александровна',
     is_ip: false,
@@ -48,8 +53,23 @@ const persons = [
     is_ip: false,
     sheet: 1
   },
+    {
+    name: 'Борзенко Наталья Александровна',
+    is_ip: false,
+    sheet: 1
+  },
   {
     name: 'Буданцов Алексей Викторович',
+    is_ip: false,
+    sheet: 1
+  },
+    {
+    name: 'Вронская Мария Евгеньевна',
+    is_ip: false,
+    sheet: 1
+  },
+  {
+    name: 'Карлов Андрей Станиславович',
     is_ip: false,
     sheet: 1
   },
@@ -80,12 +100,27 @@ const persons = [
     sheet: 1
   },
   {
+    name: 'Овчинникова Надежда Дмитриевна',
+    is_ip: false,
+    sheet: 1
+  },
+  {
     name: 'Петрова Мария Дмитриевна',
     is_ip: false,
     sheet: 1
   },
   {
+    name: 'Решетина Наталия Николаевна',
+    is_ip: false,
+    sheet: 1
+  },
+  {
     name: 'Силуянова Анастасия Алексеевна',
+    is_ip: false,
+    sheet: 1
+  },
+  {
+    name: 'Склизкова Полина Юрьевна',
     is_ip: false,
     sheet: 1
   },
@@ -99,6 +134,8 @@ const persons = [
     is_ip: false,
     sheet: 1
   },
+
+  // Захарцова Татьяна Александровна
 ]
 
 
@@ -117,7 +154,6 @@ async function generateExcel(options = {}) {
   const template = new XlsxTemplate(templateData);
   if (sheetNumber !== 1) {
     const sheetToCopy = template.sheets.filter((s) => s.id == +sheetNumber);
-    console.log('s1 ', sheetToCopy[0].name, 's2 ', template.sheets[0].name)
 
     template.copySheet(sheetToCopy[0].name, template.sheets[0].name)
 
@@ -139,21 +175,14 @@ async function generateExcel(options = {}) {
   if (shetsToDelete.length) {
    for (let i = 0; i < shetsToDelete.length; i++) {
     template.deleteSheet(shetsToDelete[i].name)
-    console.log('deleted ', shetsToDelete[i].name)
    }
-
-   console.log('shhets on ', template.sheets)
   }
 
   if (copyName !== '') {
     template.sheets[0].name = copyName;
-
-    console.log('sheets on rename', template.sheets)
   }
 
   // const template2 = new XlsxTemplate()
-
-  
   // console.log('tmp 2 ', template2)
   
   // Set up some placeholder values matching the placeholders in the template
@@ -173,7 +202,6 @@ async function generateExcel(options = {}) {
 
   // Get binary data
   const dataBufer = template.generate({type: 'nodebuffer'});
-  // var data = template.generate();
 
   fs.writeFileSync(`./out/${getActFileName(date, person)}`, dataBufer, 'utf8', (err) => {
       if (err) {
@@ -254,18 +282,21 @@ persons.forEach((person) => {
 
   const tableData = filteredData.filter((el) => el.person.toUpperCase().trim() == surname)
   
-  const options = {
-    date: {
-      start: convertDateDot(startDate),
-      end:   convertDateDot(endDate)
-    },
-    tableData,
-    director,
-    person: person.name,
-    sheetNumber: person.sheet || 1,
-    is_ip: person.is_ip,
-    dogovor: person?.dogovor || ''
-  }
+  if (tableData.length) {
+    console.log('В отчёт добавлен(а): ', person.name)
+    const options = {
+      date: {
+        start: convertDateDot(startDate),
+        end:   convertDateDot(endDate)
+      },
+      tableData,
+      director,
+      person: person.name,
+      sheetNumber: person.sheet || 1,
+      is_ip: person.is_ip,
+      dogovor: person?.dogovor || ''
+    }
 
-  generateExcel(options);
+    generateExcel(options);
+  }
 })

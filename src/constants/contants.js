@@ -1,1 +1,1 @@
-export const DEFAULT_DIRECTOR_FIO = 'Найденок Е.И.';
+export const DEFAULT_DIRECTOR_FIO = 'Баева Л.В.';

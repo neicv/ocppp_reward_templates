@@ -2,6 +2,7 @@ resources/private/
 info/
 out/
 tmp/
+node_modules/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
