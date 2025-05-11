@@ -1,0 +1,1 @@
+export const DEFAULT_DIRECTOR_FIO = 'Найденок Е.И.';
